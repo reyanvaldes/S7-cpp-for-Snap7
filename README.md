@@ -6,5 +6,7 @@ This S7 C/C++ functions allows to parsing data read from Siemens PLC/SINAMICs by
 History of versions
 21-Dic-2015 - First version
 
+15-Apr-2023 - TOD & DATE mapping added (PiotrBzdręga)
+
 
 
