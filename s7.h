@@ -48,6 +48,8 @@ using namespace std;
 
 struct TOD { uint32_t h; uint32_t m; uint32_t s; uint32_t ms; };
 
+struct DATE { uint32_t year; uint32_t month; uint32_t day; };
+
 string S7_GetTxtPLCType (short int plcType); // Get Text description of PLC Type
 
     int S7_GetDataTypeSize (int type); // Get data type size
@@ -125,5 +127,7 @@ int64_t S7_GetLIntAt(byte Buffer[], int Pos); // Get 64 bit signed value (S7 LIn
    void S7_SetCharsAt(byte Buffer[], int BufferLen, int Pos, string Value); //Set Array of char (S7 ARRAY OF CHARS)
 
    TOD S7_GetTODAt(byte Buffer[], int Pos); // Get 4x int  unsigned value(S7 TOD)
+
+   DATE S7_GetDATEAt(byte Buffer[], int Pos); // Get 3x int  unsigned value(S7 DATE)
 
 #endif // S7_H

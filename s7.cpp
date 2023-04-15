@@ -546,3 +546,20 @@ float S7_GetRealAt(byte Buffer[], int Pos)
   }
 
   //****************************************************************************
+  // Get 3x int unsigned value year/month/day (S7 DATE) 
+  // D#1990-1-1 to D#2168 - 12 - 31
+  // IEC date in steps of 1 day
+  DATE S7_GetDATEAt(byte Buffer[], int Pos)
+  {
+      const unsigned z = S7_GetUIntAt(Buffer, Pos) + 726773; //(offset) days from 0000-03-01 to 1990-01-01
+      const unsigned era = z / 146097;
+      const unsigned doe = (z - era * 146097);          // [0, 146096]
+      const unsigned yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;  // [0, 399]
+      const unsigned y = yoe + era * 400;
+      const unsigned doy = doe - (365 * yoe + yoe / 4 - yoe / 100);                // [0, 365]
+      const unsigned mp = (5 * doy + 2) / 153;                                   // [0, 11]
+      const unsigned d = doy - (153 * mp + 2) / 5 + 1;                             // [1, 31]
+      const unsigned m = mp < 10 ? mp + 3 : mp - 9;                            // [1, 12]
+      return DATE{ y + (m <= 2), m, d };
+  }
+  //****************************************************************************
