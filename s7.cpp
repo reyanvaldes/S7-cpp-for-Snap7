@@ -530,3 +530,19 @@ float S7_GetRealAt(byte Buffer[], int Pos)
   }
 
  //****************************************************************************
+ // Get 4x int unsigned value h/m/s/ms (S7 TOD) 
+ // TOD#0:0:0.0 to TOD#23:59 : 59.999
+ // Time in steps of 1 ms
+  TOD S7_GetTODAt(byte Buffer[], int Pos)
+  {
+      uint32_t time = S7_GetUDIntAt(Buffer, Pos);
+      uint32_t ms = time % 1000;
+      time = (time - ms) / 1000;
+      uint32_t s = time % 60;
+      time = (time - s) / 60;
+      uint32_t m = time % 60;
+      uint32_t h = (time - m) / 60;
+      return TOD{ h,m,s,ms };
+  }
+
+  //****************************************************************************

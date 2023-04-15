@@ -46,6 +46,8 @@ using namespace std;
 #define S7_TYPE_STRING  15
 #define S7_TYPE_ARRAYCHAR 16
 
+struct TOD { uint32_t h; uint32_t m; uint32_t s; uint32_t ms; };
+
 string S7_GetTxtPLCType (short int plcType); // Get Text description of PLC Type
 
     int S7_GetDataTypeSize (int type); // Get data type size
@@ -121,5 +123,7 @@ int64_t S7_GetLIntAt(byte Buffer[], int Pos); // Get 64 bit signed value (S7 LIn
    string S7_GetCharsAt(byte Buffer[], int Pos, int Size); //Get Array of char (S7 ARRAY OF CHARS)
 
    void S7_SetCharsAt(byte Buffer[], int BufferLen, int Pos, string Value); //Set Array of char (S7 ARRAY OF CHARS)
+
+   TOD S7_GetTODAt(byte Buffer[], int Pos); // Get 4x int  unsigned value(S7 TOD)
 
 #endif // S7_H
