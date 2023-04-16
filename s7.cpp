@@ -563,3 +563,18 @@ float S7_GetRealAt(byte Buffer[], int Pos)
       return DATE{ y + (m <= 2), m, d };
   }
   //****************************************************************************
+  // Get year - month - day - hour:minute:second:millisecond (S7 DATE_AND_TIME)
+  // Min.: DT#1990-01-01-00:00:00.000 Max.: DT#2089 - 12 - 31 - 23:59 : 59.999
+  DATE_AND_TIME S7_GetDATE_AND_TIMEAt(byte Buffer[], int Pos)
+  {
+      uint16_t year = S7_BDCToByte(Buffer[Pos]);                                     // [0, 999]
+      year += (year >= 90 ? 1900 : 2000); //(Years // [1990, 2089]); BCD#90 = 1990; (...) BCD#0 = 2000; (...) BCD#89 = 2089
+      uint16_t month = S7_BDCToByte(Buffer[Pos + 1]);                                 // [1, 12]
+      uint16_t day = S7_BDCToByte(Buffer[Pos + 2]);                                 // [1, 31]
+      uint16_t hour = S7_BDCToByte(Buffer[Pos + 3]);                                // [0, 23]
+      uint16_t minute = S7_BDCToByte(Buffer[Pos + 4]);                              // [0, 59]
+      uint16_t second = S7_BDCToByte(Buffer[Pos + 5]);                              // [0, 59]
+      uint16_t msec = S7_BDCToByte(Buffer[Pos + 6]) * 10 + ((Buffer[Pos + 7] >> 4) & 0x0F); // [0, 999] 7 (4MSB) 
+      uint16_t weekday = (Buffer[Pos + 7] & 0x0F); //[1, 7]; #1 = Sunday; #7 = Saturday 7 (4LSB)
+      return DATE_AND_TIME{ year, month, day, hour, minute, second, msec, weekday };
+  }

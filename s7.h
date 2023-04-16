@@ -50,6 +50,9 @@ struct TOD { uint32_t h; uint32_t m; uint32_t s; uint32_t ms; };
 
 struct DATE { uint32_t year; uint32_t month; uint32_t day; };
 
+struct DATE_AND_TIME { uint16_t year; uint16_t month; uint16_t day; uint16_t hour; uint16_t minute; uint16_t second; uint16_t msec; uint16_t weekday; };
+
+
 string S7_GetTxtPLCType (short int plcType); // Get Text description of PLC Type
 
     int S7_GetDataTypeSize (int type); // Get data type size
@@ -129,5 +132,7 @@ int64_t S7_GetLIntAt(byte Buffer[], int Pos); // Get 64 bit signed value (S7 LIn
    TOD S7_GetTODAt(byte Buffer[], int Pos); // Get 4x int  unsigned value(S7 TOD)
 
    DATE S7_GetDATEAt(byte Buffer[], int Pos); // Get 3x int  unsigned value(S7 DATE)
+
+   DATE_AND_TIME S7_GetDATE_AND_TIMEAt(byte Buffer[], int Pos); // Get struct of DATE_AND_TIME (S7 DATE_AND_TIME)
 
 #endif // S7_H
