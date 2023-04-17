@@ -530,20 +530,33 @@ float S7_GetRealAt(byte Buffer[], int Pos)
   }
 
  //****************************************************************************
- // Get 4x int unsigned value h/m/s/ms (S7 TOD) 
+ // Get TIME_OF_DAY hour:minute:second:millisecond (S7 TOD) 
  // TOD#0:0:0.0 to TOD#23:59 : 59.999
  // Time in steps of 1 ms
   TOD S7_GetTODAt(byte Buffer[], int Pos)
   {
       uint32_t time = S7_GetUDIntAt(Buffer, Pos);
-      uint32_t ms = time % 1000;
-      time = (time - ms) / 1000;
-      uint32_t s = time % 60;
-      time = (time - s) / 60;
-      uint32_t m = time % 60;
-      uint32_t h = (time - m) / 60;
+      uint32_t msec = time % 1000;
+      time = (time - msec) / 1000;
+      uint32_t second = time % 60;
+      time = (time - second) / 60;
+      uint32_t minute = time % 60;
+      uint32_t hour = (time - minute) / 60;
 
-      return TOD{ h,m,s,ms };
+      return TOD{ hour,minute,second,msec };
+  }
+
+  //****************************************************************************
+  // Set TIME_OF_DAY hour:minute:second:millisecond (S7 TOD) 
+  // TOD#0:0:0.0 to TOD#23:59 : 59.999
+  // Time in steps of 1 ms
+  void S7_SetTODAt(byte Buffer[], int Pos, uint32_t hour, uint32_t minute, uint32_t second, uint32_t msec )
+  {
+      uint32_t time = msec;
+      time += 1000 * second;
+      time += 60 * 1000 * hour;
+      time += 60 * 60 * 1000 * hour;
+      S7_SetUDIntAt(Buffer,Pos,time);
   }
 
   //****************************************************************************
@@ -551,6 +564,7 @@ float S7_GetRealAt(byte Buffer[], int Pos)
   // The DATE data type saves the date as an unsigned integer. The representation contains the year, the month, and the day.
   // D#1990-1-1 to D#2168 - 12 - 31
   // IEC date in steps of 1 day
+  //http://howardhinnant.github.io/date_algorithms.html#Acknowledgments
   DATE S7_GetDATEAt(byte Buffer[], int Pos)
   {
       const unsigned z = S7_GetUIntAt(Buffer, Pos) + 726773; //(offset) days from 0000-03-01 to 1990-01-01
@@ -564,6 +578,16 @@ float S7_GetRealAt(byte Buffer[], int Pos)
       const unsigned m = mp < 10 ? mp + 3 : mp - 9;                                // [1, 12]
 
       return DATE{ y + (m <= 2), m, d };
+  }
+  //****************************************************************************
+  // Set (Year-Month-Day) (S7 DATE) 
+  // The DATE data type saves the date as an unsigned integer. The representation contains the year, the month, and the day.
+  // D#1990-1-1 to D#2168 - 12 - 31
+  // IEC date in steps of 1 day
+  //http://howardhinnant.github.io/date_algorithms.html#Acknowledgments
+  void S7_SetDATEAt(byte Buffer[], int Pos, uint32_t year, uint32_t month, uint32_t day)
+  {
+    
   }
   //****************************************************************************
   // Get year - month - day - hour:minute:second:millisecond (S7 DATE_AND_TIME)

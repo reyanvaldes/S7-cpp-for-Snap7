@@ -130,9 +130,13 @@ int64_t S7_GetLIntAt(byte Buffer[], int Pos); // Get 64 bit signed value (S7 LIn
 
    void S7_SetCharsAt(byte Buffer[], int BufferLen, int Pos, string Value); //Set Array of char (S7 ARRAY OF CHARS)
 
-   TOD S7_GetTODAt(byte Buffer[], int Pos); // Get 4x int  unsigned value(S7 TOD)
+   TOD S7_GetTODAt(byte Buffer[], int Pos); // Get struct of TOD (S7 TOD)
 
-   DATE S7_GetDATEAt(byte Buffer[], int Pos); // Get 3x int  unsigned value(S7 DATE)
+   void S7_SetTODAt(byte Buffer[], int Pos, uint32_t hour, uint32_t minute, uint32_t second, uint32_t msec); // Set struct of TOD(S7 TOD)
+
+   DATE S7_GetDATEAt(byte Buffer[], int Pos); // Get struct of DATE (S7 DATE)
+
+   void S7_SetDATEAt(byte Buffer[], int Pos); // Get struct of DATE (S7 DATE)
 
    DATE_AND_TIME S7_GetDATE_AND_TIMEAt(byte Buffer[], int Pos); // Get struct of DATE_AND_TIME (S7 DATE_AND_TIME)
 
