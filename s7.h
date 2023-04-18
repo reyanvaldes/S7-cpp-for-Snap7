@@ -45,6 +45,10 @@ using namespace std;
 
 #define S7_TYPE_STRING  15
 #define S7_TYPE_ARRAYCHAR 16
+#define S7_TYPE_TOD     17
+#define S7_TYPE_DATE    18
+#define S7_TYPE_DATE_AND_TIME    19
+#define S7_TYPE_DTL     20
 
 struct TOD { uint32_t h; uint32_t m; uint32_t s; uint32_t ms; };
 
