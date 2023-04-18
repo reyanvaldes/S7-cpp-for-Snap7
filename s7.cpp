@@ -529,10 +529,11 @@ float S7_GetRealAt(byte Buffer[], int Pos)
    Value.copy ((char*) &Buffer[Pos],Size);
   }
 
- //****************************************************************************
- // Get TIME_OF_DAY hour:minute:second:millisecond (S7 TOD) 
- // TOD#0:0:0.0 to TOD#23:59 : 59.999
- // Time in steps of 1 ms
+  //****************************************************************************
+  // Get TIME_OF_DAY hour:minute:second:millisecond (S7 TOD) 
+  // TOD#0:0:0.0 to TOD#23:59 : 59.999
+  // Time in steps of 1 ms
+  //https://support.industry.siemens.com/cs/mdm/109773506?c=64869849355&lc=en-WW
   TOD S7_GetTODAt(byte Buffer[], int Pos)
   {
       uint32_t time = S7_GetUDIntAt(Buffer, Pos);
@@ -564,7 +565,7 @@ float S7_GetRealAt(byte Buffer[], int Pos)
   // The DATE data type saves the date as an unsigned integer. The representation contains the year, the month, and the day.
   // D#1990-1-1 to D#2168 - 12 - 31
   // IEC date in steps of 1 day
-  //http://howardhinnant.github.io/date_algorithms.html#Acknowledgments
+  //http://howardhinnant.github.io/date_algorithms.html#civil_from_days
   DATE S7_GetDATEAt(byte Buffer[], int Pos)
   {
       const unsigned z = S7_GetUIntAt(Buffer, Pos) + 726773; //(offset) days from 0000-03-01 to 1990-01-01
@@ -584,10 +585,16 @@ float S7_GetRealAt(byte Buffer[], int Pos)
   // The DATE data type saves the date as an unsigned integer. The representation contains the year, the month, and the day.
   // D#1990-1-1 to D#2168 - 12 - 31
   // IEC date in steps of 1 day
-  //http://howardhinnant.github.io/date_algorithms.html#Acknowledgments
+  //http://howardhinnant.github.io/date_algorithms.html#days_from_civil
   void S7_SetDATEAt(byte Buffer[], int Pos, uint32_t year, uint32_t month, uint32_t day)
   {
-    
+      year -= month <= 2;
+      const unsigned era = year / 400; 
+      const unsigned yoe = static_cast<unsigned>(year - era * 400);      // [0, 399]
+      const unsigned doy = (153 * (month > 2 ? month - 3 : month + 9) + 2) / 5 + day - 1;  // [0, 365]
+      const unsigned doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;         // [0, 146096]
+      uint32_t Value= era * 146097 + static_cast<unsigned>(doe) - 726773;
+      S7_SetUDIntAt(Buffer, Pos, Value);
   }
   //****************************************************************************
   // Get year - month - day - hour:minute:second:millisecond (S7 DATE_AND_TIME)
@@ -595,7 +602,7 @@ float S7_GetRealAt(byte Buffer[], int Pos)
   // Min.: DT#1990-01-01-00:00:00.000 Max.: DT#2089 - 12 - 31 - 23:59 : 59.999
   DATE_AND_TIME S7_GetDATE_AND_TIMEAt(byte Buffer[], int Pos)
   {
-      uint16_t year = S7_BDCToByte(Buffer[Pos]);                                    // [0, 999]
+      uint16_t year = S7_BDCToByte(Buffer[Pos]);                                    // [0, 99]
       year += (year >= 90 ? 1900 : 2000); //(Years // [1990, 2089]); BCD#90 = 1990; (...) BCD#0 = 2000; (...) BCD#89 = 2089
       uint16_t month = S7_BDCToByte(Buffer[Pos + 1]);                               // [1, 12]
       uint16_t day = S7_BDCToByte(Buffer[Pos + 2]);                                 // [1, 31]
@@ -608,19 +615,55 @@ float S7_GetRealAt(byte Buffer[], int Pos)
       return DATE_AND_TIME{ year, month, day, hour, minute, second, msec, weekday };
   }
   //****************************************************************************
+  // Set year - month - day - hour:minute:second:millisecond (S7 DATE_AND_TIME)
+  // The DT (DATE_AND_TIME) data type saves the information on date and time of day in BCD format.
+  // Min.: DT#1990-01-01-00:00:00.000 Max.: DT#2089 - 12 - 31 - 23:59 : 59.999
+   void S7_SetDATE_AND_TIMEAt(byte Buffer[], int Pos, uint16_t year,  uint16_t month, uint16_t day, uint16_t hour, uint16_t minute, uint16_t second, uint16_t msec)
+  {   
+      year %= 100; //(Years // [1990, 2089]); BCD#90 = 1990; (...) BCD#0 = 2000; (...) BCD#89 = 2089
+      Buffer[Pos] = S7_ByteToBDC(year);                                             // [0, 99]
+      Buffer[Pos + 1] = S7_ByteToBDC(month);                                        // [1, 12]
+      Buffer[Pos + 2] = S7_ByteToBDC(day);                                          // [1, 31]
+      Buffer[Pos + 3] = S7_ByteToBDC(hour);                                         // [0, 23]                           
+      Buffer[Pos + 4] = S7_ByteToBDC(minute);                                       // [0, 59]
+      Buffer[Pos + 5] = S7_ByteToBDC(second);                                       // [0, 59]
+      Buffer[Pos + 6] = S7_ByteToBDC(msec/10);
+      Buffer[Pos + 7] = msec%10 & 0x0F;
+      
+      //uint16_t weekday = (Buffer[Pos + 7] & 0x0F); //[1, 7]; #1 = Sunday; #7 = Saturday 7 (4LSB)
+      //???
+      
+  }
+  //****************************************************************************
   // Get Year-Month-Day-Hour:Minute:Second.Nanoseconds (S7 DTL)
   // An operand of data type DTL has a length of 12 bytes and stores date and time information in a predefined structure.
   // Min.: DTL#1970-01-01-00:00:00.0  Max.: DTL#2262 - 04 - 11 - 23:47 : 16.854775807
-  DTL S7_GetDTLAt(byte Buffer[], int Pos)
-  {
-      uint16_t year = S7_GetUIntAt(Buffer,Pos);                                     // 1970, 2262]
-      uint16_t month = static_cast<uint16_t>(S7_GetByteAt(Buffer,Pos + 2));         // [1, 12]
-      uint16_t day = static_cast<uint16_t>(S7_GetByteAt(Buffer, Pos + 3));          // [1, 31]
-      uint16_t weekday = static_cast<uint16_t>(S7_GetByteAt(Buffer, Pos + 4));      // [1, 7]
-      uint16_t hour = static_cast<uint16_t>(S7_GetByteAt(Buffer, Pos + 5));         // [0, 23]
-      uint16_t minute = static_cast<uint16_t>(S7_GetByteAt(Buffer, Pos + 6));       // [0, 59]
-      uint16_t second = static_cast<uint16_t>(S7_GetByteAt(Buffer, Pos + 7));       // [0, 59]
-      uint32_t nanosec = S7_GetUDIntAt(Buffer,Pos+8);                               // [0, 999999999]
+   DTL S7_GetDTLAt(byte Buffer[], int Pos)
+   {
+       uint16_t year = S7_GetUIntAt(Buffer, Pos);                                     // 1970, 2262]
+       uint16_t month = static_cast<uint16_t>(S7_GetByteAt(Buffer, Pos + 2));         // [1, 12]
+       uint16_t day = static_cast<uint16_t>(S7_GetByteAt(Buffer, Pos + 3));          // [1, 31]
+       uint16_t weekday = static_cast<uint16_t>(S7_GetByteAt(Buffer, Pos + 4));      // [1, 7]
+       uint16_t hour = static_cast<uint16_t>(S7_GetByteAt(Buffer, Pos + 5));         // [0, 23]
+       uint16_t minute = static_cast<uint16_t>(S7_GetByteAt(Buffer, Pos + 6));       // [0, 59]
+       uint16_t second = static_cast<uint16_t>(S7_GetByteAt(Buffer, Pos + 7));       // [0, 59]
+       uint32_t nanosec = S7_GetUDIntAt(Buffer, Pos + 8);                               // [0, 999999999]
 
-      return DTL{ year, month, day, weekday, hour, minute, second, nanosec };
+       return DTL{ year, month, day, weekday, hour, minute, second, nanosec };
+   }
+  //****************************************************************************
+  // Set Year-Month-Day-Hour:Minute:Second.Nanoseconds (S7 DTL)
+  // An operand of data type DTL has a length of 12 bytes and stores date and time information in a predefined structure.
+  // Min.: DTL#1970-01-01-00:00:00.0  Max.: DTL#2262 - 04 - 11 - 23:47 : 16.854775807
+  void S7_SetDTLAt(byte Buffer[], int Pos, uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t minute, uint16_t second, uint16_t nanosec)
+  {
+      S7_SetUIntAt(Buffer,Pos,year);                                     // 1970, 2262]
+      S7_SetByteAt(Buffer,Pos + 2,month);                                // [1, 12]
+      S7_SetByteAt(Buffer, Pos + 3,day);                                 // [1, 31]
+      //uint16_t weekday = static_cast<uint16_t>(S7_GetByteAt(Buffer, Pos + 4));      // [1, 7]
+      S7_SetByteAt(Buffer, Pos + 5,hour);                                // [0, 23]
+      S7_SetByteAt(Buffer, Pos + 6,minute);                              // [0, 59]
+      S7_SetByteAt(Buffer, Pos + 7,second);                              // [0, 59]
+      S7_SetUDIntAt(Buffer,Pos+8,nanosec);                               // [0, 999999999]
+
   }
