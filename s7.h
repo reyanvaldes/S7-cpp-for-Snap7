@@ -148,6 +148,6 @@ struct DTL { uint16_t year; uint16_t month; uint16_t day; uint16_t weekday; uint
 
     DTL S7_GetDTLAt(byte Buffer[], int Pos); // Get struct of DTL (S7 DTL)
 
-    void S7_SetDTLAt(byte Buffer[], int Pos, uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t minute, uint16_t second, uint16_t nanosec); // Set struct of DTL (S7 DTL)
+    void S7_SetDTLAt(byte Buffer[], int Pos, uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t minute, uint16_t second, uint32_t nanosec); // Set struct of DTL (S7 DTL)
 
 #endif // S7_H
