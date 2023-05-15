@@ -170,10 +170,8 @@ byte S7_ByteToBDC(int Value)
 // Get Bit position at buffer of bytes, bits 0..7
 bool S7_GetBitAt(byte Buffer[], int Pos, int Bit)
 {
-  if (Bit < 0)
-    Bit = 0;
-  if (Bit > 7)
-    Bit = 7;
+  if (Bit < 0) Bit = 0;
+  if (Bit > 7) Bit = 7;
 
   return (Buffer[Pos] & Mask[Bit]) != 0;
 }
@@ -184,10 +182,8 @@ bool S7_GetBitAt(byte Buffer[], int Pos, int Bit)
 
 void S7_SetBitAt(byte Buffer[], int Pos, int Bit, bool Value)
 {
-  if (Bit < 0)
-    Bit = 0;
-  if (Bit > 7)
-    Bit = 7;
+  if (Bit < 0) Bit = 0;
+  if (Bit > 7) Bit = 7;
 
   if (Value)
     Buffer[Pos] = (byte)(Buffer[Pos] | Mask[Bit]);
@@ -228,10 +224,8 @@ int8_t S7_GetSIntAt(byte Buffer[], int Pos)
 // Set SInt (-128..127) at buffer of bytes
 void S7_SetSIntAt(byte Buffer[], int Pos, int8_t Value)
 {
-  if (Value < -128)
-    Value = -128;
-  if (Value > 127)
-    Value = 127;
+  if (Value < -128) Value = -128;
+  if (Value > 127) Value = 127;
   Buffer[Pos] = (byte)Value;
 }
 
@@ -293,12 +287,9 @@ void S7_SetIntAt(byte Buffer[], int Pos, int16_t Value)
 long S7_GetDIntAt(byte Buffer[], int Pos)
 {
   long Result;
-  Result = Buffer[Pos];
-  Result <<= 8;
-  Result += Buffer[Pos + 1];
-  Result <<= 8;
-  Result += Buffer[Pos + 2];
-  Result <<= 8;
+  Result = Buffer[Pos]; Result <<= 8;
+  Result += Buffer[Pos + 1]; Result <<= 8;
+  Result += Buffer[Pos + 2]; Result <<= 8;
   Result += Buffer[Pos + 3];
   return Result;
 }
@@ -321,12 +312,9 @@ void S7_SetDIntAt(byte Buffer[], int Pos, long Value)
 uint32_t S7_GetUDIntAt(byte Buffer[], int Pos)
 {
   uint32_t Result;
-  Result = Buffer[Pos];
-  Result <<= 8;
-  Result |= Buffer[Pos + 1];
-  Result <<= 8;
-  Result |= Buffer[Pos + 2];
-  Result <<= 8;
+  Result = Buffer[Pos]; Result <<= 8;
+  Result |= Buffer[Pos + 1]; Result <<= 8;
+  Result |= Buffer[Pos + 2]; Result <<= 8;
   Result |= Buffer[Pos + 3];
   return Result;
 }
@@ -366,20 +354,13 @@ void S7_SetDWordAt(byte Buffer[], int Pos, uint32_t Value)
 uint64_t S7_GetULIntAt(byte Buffer[], int Pos)
 {
   uint64_t Result;
-  Result = Buffer[Pos];
-  Result <<= 8;
-  Result |= Buffer[Pos + 1];
-  Result <<= 8;
-  Result |= Buffer[Pos + 2];
-  Result <<= 8;
-  Result |= Buffer[Pos + 3];
-  Result <<= 8;
-  Result |= Buffer[Pos + 4];
-  Result <<= 8;
-  Result |= Buffer[Pos + 5];
-  Result <<= 8;
-  Result |= Buffer[Pos + 6];
-  Result <<= 8;
+  Result = Buffer[Pos]; Result <<= 8;
+  Result |= Buffer[Pos + 1]; Result <<= 8;
+  Result |= Buffer[Pos + 2]; Result <<= 8;
+  Result |= Buffer[Pos + 3]; Result <<= 8;
+  Result |= Buffer[Pos + 4]; Result <<= 8;
+  Result |= Buffer[Pos + 5]; Result <<= 8;
+  Result |= Buffer[Pos + 6]; Result <<= 8;
   Result |= Buffer[Pos + 7];
   return Result;
 }
@@ -421,20 +402,13 @@ void S7_SetLWordAt(byte Buffer[], int Pos, uint64_t Value)
 int64_t S7_GetLIntAt(byte Buffer[], int Pos)
 {
   int64_t Result;
-  Result = Buffer[Pos];
-  Result <<= 8;
-  Result += Buffer[Pos + 1];
-  Result <<= 8;
-  Result += Buffer[Pos + 2];
-  Result <<= 8;
-  Result += Buffer[Pos + 3];
-  Result <<= 8;
-  Result += Buffer[Pos + 4];
-  Result <<= 8;
-  Result += Buffer[Pos + 5];
-  Result <<= 8;
-  Result += Buffer[Pos + 6];
-  Result <<= 8;
+  Result = Buffer[Pos]; Result <<= 8;
+  Result += Buffer[Pos + 1]; Result <<= 8;
+  Result += Buffer[Pos + 2]; Result <<= 8;
+  Result += Buffer[Pos + 3]; Result <<= 8;
+  Result += Buffer[Pos + 4]; Result <<= 8;
+  Result += Buffer[Pos + 5]; Result <<= 8;
+  Result += Buffer[Pos + 6]; Result <<= 8;
   Result += Buffer[Pos + 7];
   return Result;
 }
