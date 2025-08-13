@@ -5,7 +5,7 @@
 // It uses Snap7 Library 1.4,made by Davide Nardella, http://snap7.sourceforge.net/ made by
 //
 // Made by Reyan Valdes, reyanvaldes@yahoo.com
-//
+// MIT License
 //*************************************************************************************
 
 #ifndef S7_H
