@@ -532,7 +532,7 @@ float S7_GetRealAt(byte Buffer[], int Pos)
   }
 
  //****************************************************************************
-// 15-May-2023 - TOD, DTL, DATE, DATE_AND_TIME SET/GET added (PiotrBzdręga)
+// 15-May-2023 - TOD, DTL, DATE, DATE_AND_TIME SET/GET Contribution by PiotrBzdręga 
 //****************************************************************************
 // Get TIME_OF_DAY hour:minute:second:millisecond (S7 TOD)
 // TOD#0:0:0.0 to TOD#23:59 : 59.999
@@ -614,6 +614,7 @@ void S7_SetDATEAt(byte Buffer[], int Pos, uint32_t year, uint32_t month, uint32_
 // The DT (DATE_AND_TIME) data type saves the information on date and time of day in BCD format.
 // Min.: DT#1990-01-01-00:00:00.000 Max.: DT#2089 - 12 - 31 - 23:59 : 59.999
 // https://support.industry.siemens.com/cs/mdm/109773506?c=85672757259&lc=en-PL
+
 DATE_AND_TIME S7_GetDATE_AND_TIMEAt(byte Buffer[], int Pos)
 {
   uint16_t year = S7_BDCToByte(Buffer[Pos]);                                            // [0, 99]
