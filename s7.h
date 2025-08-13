@@ -45,6 +45,49 @@ using namespace std;
 
 #define S7_TYPE_STRING  15
 #define S7_TYPE_ARRAYCHAR 16
+#define S7_TYPE_TOD           17
+#define S7_TYPE_DATE          18
+#define S7_TYPE_DATE_AND_TIME 19
+#define S7_TYPE_DTL           20
+
+struct TOD
+{
+    uint32_t h;
+    uint32_t m;
+    uint32_t s;
+    uint32_t ms;
+};
+
+struct DATE
+{
+    uint32_t year;
+    uint32_t month;
+    uint32_t day;
+};
+
+struct DATE_AND_TIME
+{
+    uint16_t year;
+    uint16_t month;
+    uint16_t day;
+    uint16_t hour;
+    uint16_t minute;
+    uint16_t second;
+    uint16_t msec;
+    uint16_t weekday;
+};
+
+struct DTL
+{
+    uint16_t year;
+    uint16_t month;
+    uint16_t day;
+    uint16_t weekday;
+    uint16_t hour;
+    uint16_t minute;
+    uint16_t second;
+    uint32_t nanosec;
+};
 
 string S7_GetTxtPLCType (short int plcType); // Get Text description of PLC Type
 
@@ -121,5 +164,21 @@ int64_t S7_GetLIntAt(byte Buffer[], int Pos); // Get 64 bit signed value (S7 LIn
    string S7_GetCharsAt(byte Buffer[], int Pos, int Size); //Get Array of char (S7 ARRAY OF CHARS)
 
    void S7_SetCharsAt(byte Buffer[], int BufferLen, int Pos, string Value); //Set Array of char (S7 ARRAY OF CHARS)
+
+   TOD S7_GetTODAt(byte Buffer[], int Pos); // Get struct of TOD (S7 TOD)
+
+   void S7_SetTODAt(byte Buffer[], int Pos, uint32_t hour, uint32_t minute, uint32_t second, uint32_t msec); // Set struct of TOD(S7 TOD)
+
+   DATE S7_GetDATEAt(byte Buffer[], int Pos); // Get struct of DATE (S7 DATE)
+
+   void S7_SetDATEAt(byte Buffer[], int Pos, uint32_t year, uint32_t month, uint32_t day); // Set struct of DATE (S7 DATE)
+
+   DATE_AND_TIME S7_GetDATE_AND_TIMEAt(byte Buffer[], int Pos); // Get struct of DATE_AND_TIME (S7 DATE_AND_TIME)
+
+   void S7_SetDATE_AND_TIMEAt(byte Buffer[], int Pos, uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t minute, uint16_t second, uint16_t msec); // Set struct of DATE_AND_TIME (S7 DATE_AND_TIME)
+
+   DTL S7_GetDTLAt(byte Buffer[], int Pos); // Get struct of DTL (S7 DTL)
+
+   void S7_SetDTLAt(byte Buffer[], int Pos, uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t minute, uint16_t second, uint32_t nanosec); // Set struct of DTL (S7 DTL)
 
 #endif // S7_H
