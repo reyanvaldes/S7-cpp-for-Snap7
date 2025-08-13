@@ -5,6 +5,7 @@ This S7 C/C++ functions allows to parsing data read from Siemens PLC/SINAMICs by
 
 History of versions
 21-Dic-2015 - First version
+
 13-Agu-2025 - Added MIT LICENSE
 
 
