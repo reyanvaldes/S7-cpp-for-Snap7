@@ -1,0 +1,84 @@
+The libsnap7 is an excellent work!!! developed by Davela.
+
+A bug was identified that showing in heavy busy network where the packages can get a delay for receiving or one package get lost for some reason . 
+The changes in src/core/s7_isotcp.cpp helps identify and protect verifiying the receive package match the sending PDU (Identifier) make it the interchanging more secure and avoid access violation.
+In other words, this helps parsing the wrong package.  
+
+for building from source code:  see https://snap7.sourceforge.net/snap7_source.html
+
+download snap7-full-1.4.2 or greater from https://sourceforge.net/projects/snap7
+unzip snap7-full-1.4.2
+
+Need to modify a bug in the reading isotcp packages to guarantee the reponse match the query on snap7, this is very important in heavy network traffic
+https://sourceforge.net/p/snap7/discussion/bugfix/thread/de352e4cc2/
+////////   MODIFICATION OF SNAP7 TO FIX ACCESS VIOLATION ISSUE
+
+Before build the library, need to modify src/core/s7_isotcp.cpp
+
+#include "s7_types.h"  // Added on 7/5/2024
+#include <iostream>    // Added on 7/5/2024
+
+//*********************************************************************
+int TIsoTcpSocket::isoExchangeBuffer(void *Data, int &Size)
+{
+	/*int Result;
+
+    ClrIsoError();
+	Result =isoSendBuffer(Data, Size);
+	if (Result==0)
+		Result =isoRecvBuffer(Data, Size);
+	return Result; */
+	
+	// Improved based on the solution: https://sourceforge.net/p/snap7/discussion/bugfix/thread/de352e4cc2/
+  // Provided by 	Stéphane Rousseau 
+	// Changed on 7/5/2024 by Reyan Valdes
+	int Result;
+
+	ClrIsoError();
+	PS7ReqHeader pduheader = (PS7ReqHeader)&PDU.Payload;
+	int PDUTypeSend = pduheader->PDUType;
+	int PDUTypeSequence = pduheader->Sequence;
+	Result = isoSendBuffer(Data, Size);
+	if (Result == 0)
+	{
+	   bool SequenceMatch = false;
+	   while (!SequenceMatch && Result == 0)
+	   {
+		   Result = isoRecvBuffer(Data, Size);
+		   if (Result == 0)
+		   {
+			   if (pduheader->PDUType == PduType_response &&
+							   pduheader->Sequence == PDUTypeSequence)
+			   {
+				   SequenceMatch = true;
+			   }
+			   else
+			   {
+				  std::cout << "[PROFINET] PDU Rejected didn't match response with request" << std::endl;
+				  
+				  // TRACE("PDU Rejected ! : pduheader->PDUType %d pduheader->Sequence %d waiting for sequence %d for PDUType %d\r\n", pduheader->PDUType, pduheader->Sequence, PDUTypeSequence, PDUTypeSend);
+			   }
+		   }
+	   }
+	}
+	return Result;
+}
+
+//*********************************************************************
+
+For bulding library just follow the regular steps
+
+cd build/unix
+make –f <architecture>_linux.mk all to rebuild the library
+make –f <architecture>_linux.mk clean to clean the project
+make –f <architecture>_linux.mk install to rebuild and copy the library in usr/lib
+
+for the third option you need be root or use sudo make …
+
+Where <architecture> can be x86_64.
+
+if you want to rebuild the library and copy it into /mylib instead of /usr/lib the above example becames:
+
+make –f x86_64_linux.mk install LibInstall=/home/sdc/
+
+copy snap7.so in source core code from /home/sdc/libsnap7.so to your project libs/ 
