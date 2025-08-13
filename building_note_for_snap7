@@ -1,15 +1,18 @@
-The libsnap7 is an excellent work!!! developed by Davela.
+The libsnap7 is an excellent work!!! developed made by Davide Nardella, http://snap7.sourceforge.net/ 
 
-A bug was identified that showing in heavy busy network where the packages can get a delay for receiving or one package get lost for some reason . 
-The changes in src/core/s7_isotcp.cpp helps identify and protect verifiying the receive package match the sending PDU (Identifier) make it the interchanging more secure and avoid access violation.
-In other words, this helps parsing the wrong package.  
+A bug was identified that showing in heavy busy network where the packages can get a delay in the receiver.
+The changing in src/core/s7_isotcp.cpp helps protect to make sure the received package match the sending PDU (Identifier) make it the data communication and parsing more secure and avoid access violation.
+In other words, this helps parsing the package that we actually requested, making bullet proof the communication. 
+This was hitting me for along time, and we didn't know what to do until Stéphane Rousseau found a solution for it. (Thanks!)
+
+It is based on https://sourceforge.net/p/snap7/discussion/bugfix/thread/de352e4cc2/
 
 for building from source code:  see https://snap7.sourceforge.net/snap7_source.html
 
-download snap7-full-1.4.2 or greater from https://sourceforge.net/projects/snap7
-unzip snap7-full-1.4.2
+download snap7-full-1.4.2 or higher from https://sourceforge.net/projects/snap7
+unzip snap7-full-1.4.2 or that higher version
 
-Need to modify a bug in the reading isotcp packages to guarantee the reponse match the query on snap7, this is very important in heavy network traffic
+Need to fix a bug in the reading isotcp packages to guarantee the reponse match the query on snap7, this is very important in heavy network traffic
 https://sourceforge.net/p/snap7/discussion/bugfix/thread/de352e4cc2/
 ////////   MODIFICATION OF SNAP7 TO FIX ACCESS VIOLATION ISSUE
 
