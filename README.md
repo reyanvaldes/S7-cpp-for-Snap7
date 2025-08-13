@@ -7,6 +7,8 @@ History of versions
 
 21-Dic-2015 - First version
 
+15-May-2023 - TOD, DTL, DATE, DATE_AND_TIME SET/GET added (PiotrBzdręga)
+
 13-Agu-2025 - Added MIT LICENSE
 
 
