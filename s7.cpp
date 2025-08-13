@@ -7,6 +7,7 @@
 // It uses Snap7 Library 1.4, made by Davide Nardella,  http://snap7.sourceforge.net/
 //
 // Made by Reyan Valdes, reyanvaldes@yahoo.com
+// 15-May-2023 - TOD, DTL, DATE, DATE_AND_TIME SET/GET contribution by PiotrBzdręga (Thanks!)
 // MIT License
 //******************************************************************************************************
 
