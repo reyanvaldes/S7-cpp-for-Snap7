@@ -1,7 +1,7 @@
 The libsnap7 is an excellent work!!! developed made by Davide Nardella, http://snap7.sourceforge.net/ 
 
 A bug was identified that showing in heavy busy network where the packages can get a delay in the receiver.
-The changing in src/core/s7_isotcp.cpp helps protect to make sure the received package match the sending PDU (Identifier) make it the data communication and parsing more secure and avoid access violation.
+The changing in src/core/s7_isotcp.cpp helps or protect it to make sure the received package match the sending PDU (Identifier) make it the data communication and parsing more secure and avoid access violation.
 In other words, this helps parsing the package that we actually requested, making bullet proof the communication. 
 This was hitting me for along time, and we didn't know what to do until Stéphane Rousseau found a solution for it. (Thanks!)
 
