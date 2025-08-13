@@ -9,7 +9,7 @@ History of versions
 
 15-May-2023 - Added TOD, DTL, DATE, DATE_AND_TIME SET/GET contribution by PiotrBzdręga (Thanks!)
 
-13-Agu-2025 - Added MIT LICENSE
+13-Agu-2025 - Added MIT LICENSE, Important building note to fix access violation in snap7 before building
 
 
 
